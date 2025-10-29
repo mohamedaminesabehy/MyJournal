@@ -57,8 +57,8 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
 # Copier le script de nettoyage et l'exécuter
 COPY cleanup_docker.sh /tmp/cleanup_docker.sh
 RUN chmod +x /tmp/cleanup_docker.sh && \
-    /tmp/cleanup_docker.sh && \
-    rm /tmp/cleanup_docker.sh
+    /tmp/cleanup_docker.sh || true && \
+    rm -f /tmp/cleanup_docker.sh
 
 # ===================================================================
 # ÉTAPE 2: Image de production ULTRA-OPTIMISÉE
