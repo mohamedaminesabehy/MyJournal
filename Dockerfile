@@ -88,9 +88,10 @@ RUN groupadd -r django && useradd -r -g django django
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Créer les répertoires nécessaires
-RUN mkdir -p /app/static /app/media && \
-    chown -R django:django /app
+# Créer les répertoires nécessaires avec les bonnes permissions
+RUN mkdir -p /app/static /app/media /app/staticfiles && \
+    chown -R django:django /app && \
+    chmod -R 755 /app/staticfiles
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -105,8 +106,11 @@ RUN find . -name "*.pyc" -delete && \
     rm -rf cleanup_docker.sh requirements.optimized.txt DEPENDENCY_ANALYSIS.md || true && \
     rm -rf temp_* scripts/ || true
 
-# Collecter les fichiers statiques
-RUN python manage.py collectstatic --noinput --clear
+# Collecter les fichiers statiques avec permissions correctes
+RUN mkdir -p /app/staticfiles && \
+    chown -R django:django /app/staticfiles && \
+    chmod -R 755 /app/staticfiles && \
+    python manage.py collectstatic --noinput --clear
 
 # Changer vers l'utilisateur non-root
 USER django
