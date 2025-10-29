@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: myjournal-app
+    env: python
+    plan: starter  # Plan gratuit de Render
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm --log-level info --access-logfile - --error-logfile - my_journal_intime.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: RENDER
+        value: true
+      - key: DEBUG
+        value: false
+      - key: DJANGO_SETTINGS_MODULE
+        value: my_journal_intime.settings
+      - key: DJANGO_LOG_LEVEL
+        value: INFO
+      - key: STATIC_ROOT
+        value: /tmp/staticfiles
+    # Variables d'environnement à configurer manuellement dans Render Dashboard:
+    # SECRET_KEY: votre-clé-secrète-django
+    # MONGODB_URI: votre-uri-mongodb-atlas
+    # ALLOWED_HOSTS: votre-app.onrender.com
+    
+    # Configuration des ressources
+    disk:
+      name: myjournal-disk
+      mountPath: /tmp
+      sizeGB: 1
+    
+    # Configuration de santé
+    healthCheckPath: /health/
+    
+    # Domaines personnalisés (optionnel)
+    # domains:
+    #   - myjournal.votredomaine.com

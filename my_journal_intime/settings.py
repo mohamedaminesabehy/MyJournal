@@ -36,7 +36,12 @@ if os.getenv('RAILWAY_ENVIRONMENT'):
     # Railway génère des domaines dynamiques
     ALLOWED_HOSTS = ['*']  # Temporaire pour Railway
 elif os.getenv('RENDER'):
-    ALLOWED_HOSTS = ['*']  # Temporaire pour Render
+    # Configuration spécifique pour Render
+    render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+    if render_host:
+        ALLOWED_HOSTS = [render_host, f"{render_host}.onrender.com"]
+    else:
+        ALLOWED_HOSTS = ['*']  # Fallback pour Render
 else:
     # Développement local
     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
@@ -208,3 +213,24 @@ LOGGING = {
         },
     },
 }
+
+# Configuration spécifique pour Render
+if os.getenv('RENDER'):
+    # Optimisations pour Render
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # Configuration de cache pour Render
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+            'TIMEOUT': 300,
+            'OPTIONS': {
+                'MAX_ENTRIES': 1000,
+                'CULL_FREQUENCY': 3,
+            }
+        }
+    }
