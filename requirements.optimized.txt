@@ -1,0 +1,63 @@
+# ===================================================================
+# Requirements Optimisés pour Docker - MyJournal
+# Objectif: Réduire la taille de l'image de 6.5GB à <4GB
+# ===================================================================
+
+# --- Django & extensions ---
+Django==3.2.25
+asgiref==3.7.2
+django-cors-headers==4.3.0
+django-debug-toolbar==4.2.0
+
+# --- MongoDB via djongo (requires old sqlparse) ---
+djongo==1.3.6
+pymongo==3.12.3
+sqlparse==0.2.4
+dnspython==2.6.1
+
+# --- Imaging / CV (OPTIMISÉ) ---
+Pillow==10.1.0
+# CHANGEMENT: opencv-python-headless au lieu de opencv-python (économie ~50MB)
+opencv-python-headless==4.8.1.78
+
+# --- ML / AI (OPTIMISÉ) ---
+numpy==1.24.3
+scipy==1.11.4
+scikit-learn==1.3.2
+
+# CHANGEMENT MAJEUR: PyTorch CPU-only au lieu de la version complète (économie ~1.5GB)
+# Installation via index URL dans le Dockerfile:
+# --index-url https://download.pytorch.org/whl/cpu
+torch==2.1.1+cpu
+torchvision==0.16.1+cpu
+
+# Transformers et dépendances (gardées identiques)
+transformers==4.35.2
+huggingface-hub==0.19.4
+tokenizers==0.15.0
+safetensors==0.4.1
+joblib==1.3.2
+pandas==2.1.4
+
+# --- APIs (optional) ---
+# openai==1.3.7
+# google-cloud-vision==3.5.0
+
+# --- Utilities ---
+python-decouple==3.8
+python-dotenv==1.0.0
+requests==2.31.0
+pytz==2023.3.post1
+certifi==2024.8.30
+
+# --- Production Server ---
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# ===================================================================
+# NOTES D'OPTIMISATION:
+# ===================================================================
+# 1. opencv-python-headless: Version sans GUI, plus légère
+# 2. torch+cpu/torchvision+cpu: Versions CPU-only, beaucoup plus légères
+# 3. Réduction estimée: ~1.55GB par rapport aux versions complètes
+# ===================================================================
