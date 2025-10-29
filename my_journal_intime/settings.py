@@ -144,7 +144,8 @@ SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Utiliser /tmp/staticfiles pour éviter les problèmes de permissions avec WhiteNoise
+STATIC_ROOT = '/tmp/staticfiles' if os.getenv('RAILWAY_ENVIRONMENT') or os.getenv('RENDER') else BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
@@ -162,6 +163,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configuration pour WhiteNoise (fichiers statiques en production)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Options WhiteNoise pour une meilleure gestion d'erreurs
+WHITENOISE_AUTOREFRESH = DEBUG  # Actualisation automatique en mode debug
+WHITENOISE_USE_FINDERS = DEBUG  # Utiliser les finders en mode debug
+WHITENOISE_MAX_AGE = 31536000  # Cache des fichiers statiques (1 an)
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'gz', 'tgz', 'bz2', 'tbz', 'xz', 'br']
 
 # Configuration de sécurité pour la production
 if not DEBUG:

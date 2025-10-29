@@ -89,9 +89,9 @@ COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Créer les répertoires nécessaires avec les bonnes permissions
-RUN mkdir -p /app/static /app/media /app/staticfiles && \
+RUN mkdir -p /app/static /app/media /tmp/staticfiles && \
     chown -R django:django /app && \
-    chmod -R 755 /app/staticfiles
+    chmod -R 755 /tmp/staticfiles
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -107,9 +107,8 @@ RUN find . -name "*.pyc" -delete && \
     rm -rf temp_* scripts/ || true
 
 # Collecter les fichiers statiques avec permissions correctes
-RUN mkdir -p /app/staticfiles && \
-    chown -R django:django /app/staticfiles && \
-    chmod -R 755 /app/staticfiles && \
+RUN mkdir -p /tmp/staticfiles && \
+    chmod -R 777 /tmp/staticfiles && \
     python manage.py collectstatic --noinput --clear
 
 # Changer vers l'utilisateur non-root
