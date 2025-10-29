@@ -111,11 +111,12 @@ RUN mkdir -p /tmp/staticfiles && \
     chmod -R 777 /tmp/staticfiles && \
     python manage.py collectstatic --noinput --clear
 
-# Changer vers l'utilisateur non-root
-USER django
-
 # Exposer le port (Railway utilise la variable PORT automatiquement)
-EXPOSE ${PORT:-8000}
+EXPOSE 8000
+
+# Commande de santé pour Railway
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8000/health/', timeout=10)" || exit 1
 
 # Commande optimisée pour démarrer l'application avec Railway
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm --log-level info --access-logfile - --error-logfile - my_journal_intime.wsgi:application"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm --log-level info --access-logfile - --error-logfile - --timeout 120 --keep-alive 2 my_journal_intime.wsgi:application"]
