@@ -18,9 +18,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
 from journal import views
 
+def health_check(request):
+    """Endpoint de santé pour Railway et autres plateformes"""
+    return JsonResponse({
+        'status': 'healthy',
+        'debug': settings.DEBUG,
+        'allowed_hosts': settings.ALLOWED_HOSTS,
+        'static_root': str(settings.STATIC_ROOT)
+    })
+
 urlpatterns = [
+    path('health/', health_check, name='health_check'),  # Endpoint de santé
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('login/', views.signin, name='signin'),

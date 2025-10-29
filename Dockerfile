@@ -114,8 +114,8 @@ RUN mkdir -p /tmp/staticfiles && \
 # Changer vers l'utilisateur non-root
 USER django
 
-# Exposer le port
-EXPOSE $PORT
+# Exposer le port (Railway utilise la variable PORT automatiquement)
+EXPOSE ${PORT:-8000}
 
-# Commande optimisée pour démarrer l'application
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm --log-level info --access-logfile - --error-logfile - my_journal_intime.wsgi:application"]
+# Commande optimisée pour démarrer l'application avec Railway
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm --log-level info --access-logfile - --error-logfile - my_journal_intime.wsgi:application"]

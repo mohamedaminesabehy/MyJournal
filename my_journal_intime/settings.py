@@ -30,7 +30,16 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-6ej!@mk=5ro+7ndelelu&3jf+j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# Configuration ALLOWED_HOSTS pour Railway et autres plateformes
+ALLOWED_HOSTS = []
+if os.getenv('RAILWAY_ENVIRONMENT'):
+    # Railway génère des domaines dynamiques
+    ALLOWED_HOSTS = ['*']  # Temporaire pour Railway
+elif os.getenv('RENDER'):
+    ALLOWED_HOSTS = ['*']  # Temporaire pour Render
+else:
+    # Développement local
+    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
