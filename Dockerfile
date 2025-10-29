@@ -68,7 +68,7 @@ FROM python:3.11-slim as production
 # Variables d'environnement optimisées
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DJANGO_SETTINGS_MODULE=myjournal.settings \
+    DJANGO_SETTINGS_MODULE=my_journal_intime.settings \
     PORT=8000
 
 # Installer uniquement les dépendances runtime essentielles
@@ -115,4 +115,4 @@ USER django
 EXPOSE $PORT
 
 # Commande optimisée pour démarrer l'application
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm --log-level info --access-logfile - --error-logfile - myjournal.wsgi:application"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm --log-level info --access-logfile - --error-logfile - my_journal_intime.wsgi:application"]
